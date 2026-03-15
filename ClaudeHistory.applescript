@@ -1,6 +1,6 @@
 on run
 	try
-		do shell script "pgrep -qf '/opt/homebrew/bin/claude-history'"
+		do shell script "pgrep -qx claude-history"
 		tell application "iTerm2"
 			activate
 		end tell
@@ -32,10 +32,17 @@ on run
 	end if
 end run
 
+on quit
+	try
+		do shell script "pkill -f '/opt/homebrew/bin/claude-history'"
+	end try
+	continue quit
+end quit
+
 on idle
 	try
-		do shell script "pgrep -qf '/opt/homebrew/bin/claude-history'"
-		return 2
+		do shell script "pgrep -qx claude-history"
+		return 1
 	on error
 		quit
 	end try
