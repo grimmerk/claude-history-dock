@@ -1,4 +1,24 @@
 #!/bin/bash
-# Launch Ghostty with claude-history command
-# Using --initial-command so it runs inside your login shell
-open -na Ghostty --args --initial-command="/opt/homebrew/bin/claude-history"
+# Launch iTerm2 with claude-history command
+# - Reuses default window when iTerm2 isn't running (avoids double window)
+# - Stays alive so ClaudeHistory icon remains in Dock
+
+LOG="/tmp/claude-history-app.log"
+echo "=== $(date) ===" > "$LOG"
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+echo "SCRIPT_DIR=$SCRIPT_DIR" >> "$LOG"
+
+osascript "$SCRIPT_DIR/launch.scpt" >> "$LOG" 2>&1
+echo "osascript exit code: $?" >> "$LOG"
+
+sleep 2
+pgrep -afl "claude-history" >> "$LOG" 2>&1
+echo "pgrep exit code: $?" >> "$LOG"
+
+# Wait for claude-history process to end
+while pgrep -qf "/opt/homebrew/bin/claude-history" 2>/dev/null; do
+    sleep 2
+done
+
+echo "exiting $(date)" >> "$LOG"
