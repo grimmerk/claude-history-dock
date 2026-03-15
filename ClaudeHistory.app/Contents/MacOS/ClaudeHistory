@@ -1,0 +1,4 @@
+#!/bin/bash
+# Launch Ghostty with claude-history command
+# Using --initial-command so it runs inside your login shell
+open -na Ghostty --args --initial-command="/opt/homebrew/bin/claude-history"
