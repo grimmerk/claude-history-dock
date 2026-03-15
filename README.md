@@ -1,52 +1,29 @@
 # Claude History Dock App
 
-A macOS app that launches `claude-history` in Ghostty terminal.
+A macOS app that launches `claude-history` in iTerm2 with a custom Dock icon.
 
-## Quick Setup
+Built as an AppleScript app via `osacompile` so it registers properly with macOS and shows its own icon in the Dock while running.
+
+## Setup
 
 ```bash
 cd claude-history-dock
-chmod +x setup_claude_history_app.sh
 ./setup_claude_history_app.sh
 ```
 
-Then drag "Claude History" from `~/Applications` to your Dock.
+Then drag "ClaudeHistory" from `/Applications` to your Dock.
 
-## Manual Setup
+If the icon doesn't show, run `killall Dock`.
 
-1. Copy `ClaudeHistory.app` to `~/Applications/`
-2. Drag it to the Dock
-3. Click to launch — it opens Ghostty and runs `claude-history`
+## How it works
+
+- Clicking the Dock icon opens iTerm2 with `claude-history`
+- If `claude-history` is already running, it just activates iTerm2
+- Closing the iTerm2 window auto-quits ClaudeHistory from the Dock
+- Quitting ClaudeHistory from the Dock also closes the iTerm2 session
 
 ## Customization
 
-### Change the command
-Edit `ClaudeHistory.app/Contents/MacOS/ClaudeHistory`
+Edit `ClaudeHistory.applescript` and re-run `./setup_claude_history_app.sh` to rebuild.
 
-### Change the terminal
-Replace `open -na Ghostty` with your preferred terminal.
-
-### Fix PATH issues
-If `claude-history` isn't found, use the full path in the script:
-```bash
-open -na Ghostty --args --initial-command="/full/path/to/claude-history"
-```
-
-## Troubleshooting
-
-- **Icon not showing?** Run `killall Dock`
-- **"Allow Ghostty to Execute" dialog?** Using `--initial-command` instead of `-e` should avoid this. If it still appears, use the AppleScript fallback below:
-
-```bash
-#!/bin/bash
-osascript <<APPLESCRIPT
-tell application "Ghostty" to activate
-delay 0.5
-tell application "System Events"
-    tell process "Ghostty"
-        keystroke "claude-history"
-        keystroke return
-    end tell
-end tell
-APPLESCRIPT
-```
+To change the command path, replace `/opt/homebrew/bin/claude-history` in the script.
