@@ -16,7 +16,10 @@ on run
 
 	if iTermWasRunning then
 		tell application "iTerm2"
-			create window with default profile command "/opt/homebrew/bin/claude-history"
+			set newWindow to (create window with default profile)
+			tell current session of newWindow
+				write text "/opt/homebrew/bin/claude-history"
+			end tell
 			activate
 		end tell
 	else
@@ -26,7 +29,7 @@ on run
 		delay 1
 		tell application "iTerm2"
 			tell current session of current window
-				write text "exec /opt/homebrew/bin/claude-history"
+				write text "/opt/homebrew/bin/claude-history"
 			end tell
 		end tell
 	end if
@@ -39,9 +42,15 @@ on quit
 	continue quit
 end quit
 
+property idleCount : 0
+
 on idle
+	set idleCount to idleCount + 1
+	if idleCount < 3 then
+		return 1
+	end if
 	try
-		do shell script "pgrep -qx claude-history || pgrep -qx claude"
+		do shell script "pgrep -qx claude-history"
 		return 1
 	on error
 		quit
