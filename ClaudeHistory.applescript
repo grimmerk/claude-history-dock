@@ -41,7 +41,7 @@ end quit
 
 on idle
 	try
-		do shell script "pgrep -qx claude-history"
+		do shell script "pgrep -qx claude-history || pgrep -qx claude"
 		return 1
 	on error
 		quit
